@@ -19,7 +19,7 @@ using Poco::Data::Statement;
 
 namespace database
 {
-
+    
     void Person::init()
     {
         try
@@ -30,6 +30,45 @@ namespace database
             Statement drop_stmt(session);
             drop_stmt << "DROP TABLE IF EXISTS Person", now;
             //*/
+
+            // (re)create table
+
+            for (auto &hint : database::Database::get_all_hints())
+            {
+                Statement create_stmt(session);
+                create_stmt << "CREATE TABLE IF NOT EXISTS `Person` (`login` VARCHAR(50) NOT NULL,"
+                            << "`first_name` VARCHAR(256),"
+                            << "`last_name` VARCHAR(256),"
+                            << "`age` INT ,"
+                            << "CONSTRAINT pk_corporation PRIMARY KEY (`login`));"
+                            << hint,
+                    now;
+            }
+        }
+
+        catch (Poco::Data::MySQL::ConnectionException &e)
+        {
+            std::cout << "connection:" << e.what() << std::endl;
+            throw;
+        }
+        catch (Poco::Data::MySQL::StatementException &e)
+        {
+
+            std::cout << "statement:" << e.what() << std::endl;
+            throw;
+        }
+    }
+    /*
+    void Person::init()
+    {
+        try
+        {
+
+            Poco::Data::Session session = database::Database::get().create_session();
+            
+            Statement drop_stmt(session);
+            drop_stmt << "DROP TABLE IF EXISTS Person", now;
+            
 
             // (re)create table
             Statement create_stmt(session);
@@ -53,7 +92,7 @@ namespace database
             throw;
         }
     }
-
+    */
     void Person::preload(const std::string &file)
     {
         try
