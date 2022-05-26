@@ -225,7 +225,7 @@ namespace database
             std::string select_str = "SELECT login, first_name, last_name, age FROM Person";
             select_str += sharding_hint;
 
-            select << "SELECT login, first_name, last_name, age FROM Person",
+            select << select_str,
                 into(p._login),
                 into(p._first_name),
                 into(p._last_name),
