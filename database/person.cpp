@@ -220,6 +220,11 @@ namespace database
             Statement select(session);
             std::vector<Person> result;
             Person p;
+            std::string string = "string";
+            std::string sharding_hint = database::Database::sharding_hint(string);
+            std::string select_str = "SELECT login, first_name, last_name, age FROM Person";
+            select_str += sharding_hint;
+
             select << "SELECT login, first_name, last_name, age FROM Person",
                 into(p._login),
                 into(p._first_name),
