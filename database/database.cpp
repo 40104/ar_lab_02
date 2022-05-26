@@ -32,13 +32,13 @@ namespace database{
         return result;
     }
 
-    std::string Database::sharding_hint(long from, long to){
+    std::string Database::sharding_hint(std::string text){
 
         std::string key;
 
-        key += std::to_string(from);
+        key += text;
         key += ";";
-        key += std::to_string(to);
+        key += text;
 
         size_t shard_number = std::hash<std::string>{}(key)%get_max_shard();
 

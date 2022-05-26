@@ -179,7 +179,12 @@ namespace database
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement select(session);
             Person p;
-            select << "SELECT login, first_name, last_name, age FROM Person where login=?",
+            std::string sharding_hint = database::Database::sharding_hint(login);
+
+            std::string select_str = "SELECT login, first_name, last_name, age FROM Person where login=?";
+            select_str += sharding_hint;
+
+            select << select_str,
                 into(p._login),
                 into(p._first_name),
                 into(p._last_name),
@@ -290,8 +295,12 @@ namespace database
         {
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement insert(session);
+            std::string sharding_hint = database::Database::sharding_hint(_login);
 
-            insert << "INSERT INTO Person (login,first_name,last_name,age) VALUES(?, ?, ?, ?)",
+            std::string select_str = "INSERT INTO Person (login,first_name,last_name,age) VALUES(?, ?, ?, ?)";
+            select_str += sharding_hint;
+
+            insert << select_str,
                 use(_login),
                 use(_first_name),
                 use(_last_name),
